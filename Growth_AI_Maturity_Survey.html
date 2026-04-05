@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Growth AI-Maturity Assessment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--blue:#0f1729;--mid:#1e3a6e;--accent:#3b7ddd;--light:#e8f0fe;--surface:#f6f8fb;--text:#1a1a2e;--muted:#6b7280;--success:#059669;--radius:12px}
+body{font-family:'Outfit',sans-serif;background:var(--surface);color:var(--text);-webkit-font-smoothing:antialiased}
+.hidden{display:none!important}
+
+/* Welcome */
+.welcome-screen{min-height:100vh;background:linear-gradient(160deg,#0a0f1e 0%,#152044 40%,#1e3a6e 100%);display:flex;align-items:center;justify-content:center;padding:24px;position:relative;overflow:hidden}
+.welcome-screen::before{content:'';position:absolute;top:-50%;right:-20%;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(59,125,221,0.15),transparent 70%);pointer-events:none}
+.welcome-card{max-width:520px;width:100%;text-align:center;position:relative;z-index:1}
+.welcome-card h1{font-size:clamp(28px,5vw,42px);font-weight:800;color:#fff;letter-spacing:-1.5px;line-height:1.1;margin-bottom:6px}
+.welcome-card h1 span{background:linear-gradient(135deg,#5b9cf5,#93c5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.welcome-card .subtitle{color:rgba(255,255,255,0.55);font-size:15px;font-weight:400;margin-bottom:36px}
+.welcome-glass{background:rgba(255,255,255,0.06);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:32px;text-align:left}
+.welcome-glass p{color:rgba(255,255,255,0.6);font-size:14px;line-height:1.7;margin-bottom:16px}
+.welcome-glass strong{color:#fff}
+.tag-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+.tag{font-size:11px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:4px 10px;color:rgba(255,255,255,0.5);font-weight:500}
+.btn-primary{width:100%;padding:15px;background:#fff;color:var(--blue);border:none;border-radius:var(--radius);font-size:16px;font-weight:700;font-family:'Outfit',sans-serif;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,0,0,0.2)}
+.btn-primary:active{transform:scale(.98)}
+
+/* Info form */
+.info-screen{min-height:100vh;padding:48px 24px}
+.form-container{max-width:480px;margin:0 auto}
+.form-container h2{font-size:24px;font-weight:700;color:var(--blue);letter-spacing:-.5px}
+.form-container .desc{color:var(--muted);font-size:14px;margin:4px 0 28px}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--mid);margin-bottom:5px;letter-spacing:.3px;text-transform:uppercase}
+.field input{width:100%;padding:11px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:15px;font-family:'Outfit',sans-serif;outline:none;transition:border .2s}
+.field input:focus{border-color:var(--accent)}
+.btn-row{display:flex;gap:12px;margin-top:28px}
+.btn-back{flex:1;padding:12px;background:#fff;color:var(--text);border:1.5px solid #e2e8f0;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif}
+.btn-next{flex:2;padding:12px;background:var(--mid);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:background .2s}
+.btn-next:disabled{background:#94a3b8;cursor:default;opacity:.6}
+
+/* Survey */
+.survey-screen{min-height:100vh;padding:24px 16px 120px}
+.survey-container{max-width:620px;margin:0 auto}
+.progress-bar{display:flex;align-items:center;gap:8px;margin-bottom:24px}
+.progress-bar span{font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap;font-family:'JetBrains Mono',monospace}
+.progress-track{flex:1;background:#e5e7eb;border-radius:6px;height:5px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--mid),var(--accent));border-radius:6px;transition:width .3s}
+.cat-tabs{display:flex;gap:6px;margin-bottom:24px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+.cat-tab{flex-shrink:0;padding:8px 14px;border-radius:8px;border:1.5px solid #e2e8f0;background:#fff;color:var(--text);font-size:12px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s}
+.cat-tab.active{border-color:var(--accent);background:var(--light);color:var(--accent)}
+.cat-tab.done::after{content:' ✓';color:var(--success)}
+.section-label{font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.section-title{font-size:22px;font-weight:700;color:var(--blue);letter-spacing:-.5px;margin-bottom:4px}
+.section-meta{color:var(--muted);font-size:13px;margin-bottom:24px}
+.question-card{background:#fff;border-radius:14px;padding:20px;margin-bottom:16px;border:1.5px solid #f1f5f9;transition:border .2s}
+.question-card.answered{border-color:var(--light)}
+.question-text{font-size:14px;font-weight:600;color:var(--blue);margin-bottom:14px;line-height:1.55}
+.question-text .qnum{color:var(--accent);margin-right:6px;font-family:'JetBrains Mono',monospace;font-size:13px}
+.option-btn{display:flex;align-items:flex-start;gap:10px;width:100%;padding:10px 12px;margin-bottom:6px;background:#fafbfc;border:1.5px solid #f1f5f9;border-radius:10px;cursor:pointer;text-align:left;font-family:'Outfit',sans-serif;transition:all .12s}
+.option-btn:hover{background:#f0f4f8;border-color:#e2e8f0}
+.option-btn.selected{background:var(--light);border-color:var(--accent)}
+.option-circle{flex-shrink:0;width:22px;height:22px;border-radius:50%;border:2px solid #cbd5e1;display:flex;align-items:center;justify-content:center;margin-top:1px;font-size:11px;font-weight:700;color:#94a3b8;transition:all .15s}
+.option-btn.selected .option-circle{background:var(--accent);border-color:var(--accent);color:#fff}
+.option-label{font-size:13px;color:var(--text);line-height:1.55}
+.option-btn.selected .option-label{color:var(--blue);font-weight:600}
+.nav-row{display:flex;gap:12px;margin-top:28px}
+
+/* Results */
+.results-screen{min-height:100vh;padding:40px 20px}
+.results-container{max-width:620px;margin:0 auto}
+.results-header{text-align:center;margin-bottom:32px}
+.results-header h1{font-size:26px;font-weight:700;color:var(--blue);letter-spacing:-.5px}
+.results-header .meta{color:var(--muted);font-size:14px;margin-top:4px}
+.score-hero{background:linear-gradient(160deg,var(--blue),var(--mid));border-radius:18px;padding:36px;text-align:center;margin-bottom:24px;color:#fff}
+.score-hero .big-score{font-size:56px;font-weight:800;font-family:'JetBrains Mono','Outfit',sans-serif;letter-spacing:-2px}
+.score-hero .out-of{font-size:14px;opacity:.6;margin-bottom:14px}
+.stage-badge{display:inline-block;background:rgba(255,255,255,0.15);border-radius:20px;padding:6px 22px;font-size:15px;font-weight:600}
+.card{background:#fff;border-radius:16px;padding:24px;margin-bottom:20px;border:1px solid #f1f5f9}
+.card h3{font-size:15px;font-weight:700;color:var(--blue);margin-bottom:16px}
+.cat-row{margin-bottom:14px}
+.cat-row-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.cat-row-name{font-size:13px;font-weight:600;color:var(--text)}
+.cat-row-score{font-size:13px;font-weight:700;color:var(--accent);font-family:'JetBrains Mono',monospace}
+.bar-track{background:#e5e7eb;border-radius:6px;height:8px;overflow:hidden}
+.bar-fill{height:100%;border-radius:6px;transition:width .5s}
+.insights-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.insight-card{border-radius:12px;padding:16px}
+.insight-card.strong{background:#f0fdf4;border:1px solid #bbf7d0}
+.insight-card.weak{background:#fef2f2;border:1px solid #fecaca}
+.insight-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.insight-card.strong .insight-label{color:#166534}
+.insight-card.weak .insight-label{color:#991b1b}
+.insight-title{font-size:14px;font-weight:600}
+.insight-card.strong .insight-title{color:#15803d}
+.insight-card.weak .insight-title{color:#dc2626}
+.insight-score{font-size:12px;margin-top:2px}
+.insight-card.strong .insight-score{color:#166534}
+.insight-card.weak .insight-score{color:#991b1b}
+.export-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.btn-export{padding:14px;border-radius:var(--radius);font-size:14px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;border:none;transition:transform .1s}
+.btn-export:active{transform:scale(.97)}
+.btn-export.primary{background:var(--mid);color:#fff}
+.btn-export.outline{background:#fff;color:var(--mid);border:2px solid var(--mid)}
+.btn-export.email{background:var(--success);color:#fff}
+.btn-link{width:100%;padding:12px;background:transparent;color:var(--muted);border:1.5px solid #e2e8f0;border-radius:var(--radius);font-size:13px;cursor:pointer;font-family:'Outfit',sans-serif}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--blue);color:#fff;padding:10px 24px;border-radius:10px;font-size:13px;font-weight:600;z-index:999;opacity:0;transition:opacity .3s}
+.toast.show{opacity:1}
+
+/* Radar */
+.radar-wrap{display:flex;justify-content:center;margin:0 -8px}
+
+@media(max-width:480px){.insights-grid,.export-grid{grid-template-columns:1fr}.score-hero .big-score{font-size:44px}}
+</style>
+</head>
+<body>
+
+<!-- Welcome -->
+<div id="welcome" class="welcome-screen">
+  <div class="welcome-card">
+    <h1>Growth <span>AI-Maturity</span></h1>
+    <p class="subtitle">Self-Assessment for CMOs & Growth Leaders</p>
+    <div class="welcome-glass">
+      <p>This assessment maps your organization across <strong>7 growth dimensions</strong> to identify your AI maturity stage — from AI Curious to Autonomous Growth.</p>
+      <p><strong>21 questions</strong> · ~15 minutes · Instant results with exportable report</p>
+      <div class="tag-row">
+        <span class="tag">📊 Radar Analysis</span><span class="tag">📥 CSV Export</span><span class="tag">📧 Email Results</span><span class="tag">📋 Copy to Clipboard</span>
+      </div>
+      <button class="btn-primary" onclick="showScreen('info')">Start Assessment →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Info -->
+<div id="info" class="info-screen hidden">
+  <div class="form-container">
+    <h2>Respondent Information</h2>
+    <p class="desc">Help us personalize your maturity report</p>
+    <div class="field"><label>Full Name *</label><input id="f-name" placeholder="e.g., Priya Sharma" oninput="checkInfoReady()"></div>
+    <div class="field"><label>Title / Designation</label><input id="f-title" placeholder="e.g., CMO, VP Growth"></div>
+    <div class="field"><label>Organization *</label><input id="f-org" placeholder="e.g., Acme Corp" oninput="checkInfoReady()"></div>
+    <div class="field"><label>Industry</label><input id="f-industry" placeholder="e.g., B2B SaaS, FinTech"></div>
+    <div class="field"><label>Company Size</label><input id="f-size" placeholder="e.g., 200-500 employees"></div>
+    <div class="field"><label>Email</label><input id="f-email" type="email" placeholder="e.g., priya@acme.com"></div>
+    <div class="btn-row">
+      <button class="btn-back" onclick="showScreen('welcome')">← Back</button>
+      <button class="btn-next" id="btn-begin" disabled onclick="beginSurvey()">Begin Survey →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Survey -->
+<div id="survey" class="survey-screen hidden">
+  <div class="survey-container">
+    <div class="progress-bar"><span id="prog-text">0/21</span><div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div></div>
+    <div class="cat-tabs" id="cat-tabs"></div>
+    <div class="section-label" id="sec-label"></div>
+    <div class="section-title" id="sec-title"></div>
+    <div class="section-meta" id="sec-meta"></div>
+    <div id="questions-container"></div>
+    <div class="nav-row" id="nav-row"></div>
+  </div>
+</div>
+
+<!-- Results -->
+<div id="results" class="results-screen hidden">
+  <div class="results-container">
+    <div class="results-header">
+      <h1>Your AI Maturity Report</h1>
+      <p class="meta" id="res-meta"></p>
+    </div>
+    <div class="score-hero">
+      <div class="big-score" id="res-score"></div>
+      <div class="out-of">out of 5.00</div>
+      <div class="stage-badge" id="res-stage"></div>
+    </div>
+    <div class="card">
+      <h3>Capability Radar</h3>
+      <div class="radar-wrap" id="radar-container"></div>
+    </div>
+    <div class="card">
+      <h3>Category Breakdown</h3>
+      <div id="cat-breakdown"></div>
+    </div>
+    <div class="insights-grid" id="insights"></div>
+    <div class="export-grid">
+      <button class="btn-export primary" onclick="exportCSV()">📥 Export CSV</button>
+      <button class="btn-export outline" onclick="copyResults()">📋 Copy Results</button>
+    </div>
+    <button class="btn-export email" style="width:100%;margin-bottom:12px" onclick="emailResults()">📧 Email Results to Admin</button>
+    <button class="btn-link" onclick="currentCat=0;showScreen('survey');renderSurvey()">← Review Answers</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const CATEGORIES=[
+  {id:"techstack",title:"Growth Tech Stack & Tool Utilization",weight:15,icon:"⚙️",questions:[
+    {q:"How completely does your tech stack cover your growth function needs?",opts:["CRM and email tool only; major capability gaps","CRM, marketing automation, and basic analytics (3–5 tools)","Full stack: CRM, CDP, analytics, enrichment, orchestration (6–10 tools)","Advanced stack with AI platforms, decision engines, vector DBs (10–15 tools)","AI-native stack with agents managing pipeline, targeting & optimization"]},
+    {q:"What percentage of your CRM's available features does your team actively use?",opts:["Less than 20% — basic contact storage only","20–40% — pipeline tracking, email templates, basic reports","40–60% — workflows, lead scoring, custom objects, dashboards","60–80% — API integrations, predictive scoring, AI copilot features","Over 80% — full platform leverage with autonomous orchestration"]},
+    {q:"How integrated are the tools in your growth tech stack?",opts:["Manual CSV exports; no live integrations","1–3 native integrations (e.g., CRM ↔ email tool)","4–8 integrations; CDP connected; bi-directional data sync","9–15 integrations; unified data layer; real-time event streaming","15+ integrations; fully orchestrated with AI routing data across tools"]}
+  ]},
+  {id:"processes",title:"Processes & Workflow Maturity",weight:15,icon:"🔄",questions:[
+    {q:"How would you describe your lead management process?",opts:["Manual lead capture; no defined routing or qualification criteria","Basic MQL/SQL definitions; manual routing with simple rules","Automated lead scoring & routing with lifecycle stage management","Predictive lead prioritization; dynamic routing based on buying signals","AI autonomously qualifies, routes & nurtures leads end-to-end"]},
+    {q:"How many structured experiments does your team run per month?",opts:["0–1 tests/month; ad hoc testing with no framework","2–5 tests/month; basic A/B testing on emails or landing pages","6–15 tests/month; structured testing across channels with learnings","16–30 tests/month; multivariate testing with statistical rigor","30+ tests/month; AI-designed experiments running autonomously"]},
+    {q:"How well are your marketing and sales processes integrated?",opts:["Marketing & sales operate in silos; no shared processes","Shared definitions (MQL/SQL); occasional alignment meetings","Integrated handoff processes; shared dashboards & SLAs","Unified RevOps process layer; continuous feedback loops","Fully autonomous cross-functional orchestration driven by AI"]}
+  ]},
+  {id:"data",title:"Customer & Revenue Data",weight:15,icon:"📊",questions:[
+    {q:"How unified is your customer data across marketing, sales, and product?",opts:["Siloed in 5+ disconnected tools; no single customer view","Partial consolidation; CRM as primary source with manual syncs","CDP or warehouse established; unified customer profiles emerging","Real-time unified data layer across marketing, sales & product","Fully connected growth intelligence platform with predictive models"]},
+    {q:"What is the approximate quality level of your customer data?",opts:["Over 30% duplicate/stale records; no data hygiene practices","15–30% issues; basic deduplication; periodic manual cleanup","5–15% issues; automated enrichment & validation rules in place","Less than 5% issues; real-time monitoring & auto-correction","Less than 1%; AI-driven stewardship maintaining gold-standard data"]},
+    {q:"How granular is your revenue data and attribution?",opts:["Only top-line revenue; no attribution to channels or campaigns","Basic funnel metrics with last-touch attribution","Multi-touch attribution; pipeline velocity; cohort analysis","Predictive revenue modeling; incrementality testing; LTV by segment","Real-time revenue intelligence with AI-driven forecasting"]}
+  ]},
+  {id:"ai",title:"AI Capabilities",weight:15,icon:"🤖",questions:[
+    {q:"How many distinct AI use cases are deployed across your growth functions?",opts:["1–2 use cases; mainly content drafting or chatbots","3–5; lead scoring, targeting, chatbot, content assistance","6–10; predictive analytics, churn prediction, next-best-action","11–20; decision engines, dynamic pricing, cross-channel optimization","20+; AI embedded across every growth function autonomously"]},
+    {q:"What level of autonomy do AI systems have in growth decisions?",opts:["AI provides suggestions; all decisions made by humans","AI recommends; humans approve before execution","AI executes routine decisions; humans review exceptions","AI makes most decisions; humans set guardrails & strategy","AI autonomously optimizes with human strategic oversight only"]},
+    {q:"How personalized are your customer interactions powered by AI?",opts:["No personalization; same message for all prospects","Segment-based (industry, company size, role)","Behavioral (actions, engagement, intent signals)","1:1 at account level; dynamic content & offers","Hyper-personalized in real-time per individual across all touchpoints"]}
+  ]},
+  {id:"pipeline",title:"Pipeline & Campaign Intelligence",weight:15,icon:"🎯",questions:[
+    {q:"How accurate is your pipeline forecasting?",opts:["No forecasting; relies on gut-feel estimates","Basic weighted pipeline; static win-rate assumptions","ML-based deal scoring; 60–70% accuracy","Multi-signal predictive models; 70–85% accuracy","AI-driven with 85%+ accuracy; real-time adjustments"]},
+    {q:"How sophisticated is your campaign targeting approach?",opts:["Batch-and-blast to static lists; no segmentation","Basic firmographic & demographic filters","Behavioral & intent-based targeting; lookalike audiences","Predictive targeting; AI-selected audiences; propensity scoring","Autonomous audience discovery; AI identifies untapped segments"]},
+    {q:"How does your team optimize campaigns mid-flight?",opts:["No mid-campaign adjustments; post-mortem only","Manual tweaks based on weekly performance reports","Automated A/B testing with statistical significance thresholds","Real-time optimization; dynamic budget & audience shifting","AI autonomously optimizes all parameters continuously"]}
+  ]},
+  {id:"content",title:"Content & Outreach Production",weight:15,icon:"✍️",questions:[
+    {q:"How many content assets does your team produce per month?",opts:["Fewer than 10; fully manual creation","10–30; templates & AI-assisted first drafts","30–75; AI generates variants, humans edit & QA","75–200; AI produces near-final content at scale","200+; AI autonomously creates, tests & optimizes"]},
+    {q:"How personalized is your outreach at scale?",opts:["Generic one-size-fits-all messaging","Segment-level (industry, persona templates)","Account-level using enrichment & intent data","1:1 dynamic content per prospect; AI-tailored at scale","Real-time hyper-personalized for every interaction automatically"]},
+    {q:"How coordinated is your outreach across channels?",opts:["Single channel (email only or calls only)","2–3 channels used independently; no coordination","Coordinated sequences across email, social, ads, calls","AI-orchestrated multi-channel with dynamic channel selection","Autonomous omni-channel; AI selects optimal channel per prospect"]}
+  ]},
+  {id:"measurement",title:"Measurement & Revenue Attribution",weight:10,icon:"📈",questions:[
+    {q:"What attribution model does your organization use?",opts:["No attribution; only last-touch or first-touch manually","Single-touch attribution in an analytics tool","Multi-touch (linear, time-decay, or position-based)","Data-driven with custom models & incrementality testing","AI-driven dynamic attribution; real-time credit allocation"]},
+    {q:"How would you describe your reporting capabilities?",opts:["Manual spreadsheet reports; lagging indicators only","Dashboard-based; funnel metrics & campaign performance","Automated insights; anomaly detection; drill-down analytics","Predictive insights; AI-surfaced opportunities & risk alerts","Autonomous insight generation; AI prescribes actions from data"]},
+    {q:"How accurate is your revenue forecasting?",opts:["No formal forecast; pipeline weighted average only","Quarterly with ~30% variance; manual adjustments","Monthly rolling; 15–20% variance; ML-assisted","Weekly; ~10% variance; multi-signal predictive models","Real-time; ~5% variance; AI auto-adjusts with market signals"]}
+  ]}
+];
+const STAGES=["AI Curious Growth","AI Assisted Growth","AI Powered Growth","AI Orchestrated Growth","Autonomous Growth"];
+const STAGE_COLORS=["#94A3B8","#60A5FA","#3B82F6","#2563EB","#1D4ED8"];
+
+let answers={},currentCat=0,info={};
+
+function getStage(s){if(s<=1.8)return 0;if(s<=2.6)return 1;if(s<=3.4)return 2;if(s<=4.2)return 3;return 4;}
+function getCatScore(ci){const c=CATEGORIES[ci];const sc=c.questions.map((_,qi)=>answers[`${ci}-${qi}`]||0).filter(s=>s>0);return sc.length?sc.reduce((a,b)=>a+b,0)/sc.length:0;}
+function getOverall(){let tw=0,ws=0;CATEGORIES.forEach((c,i)=>{const s=getCatScore(i);if(s>0){ws+=s*c.weight;tw+=c.weight;}});return tw>0?ws/tw:0;}
+function totalAnswered(){return Object.keys(answers).length;}
+const totalQ=CATEGORIES.reduce((a,c)=>a+c.questions.length,0);
+
+function showScreen(id){['welcome','info','survey','results'].forEach(s=>document.getElementById(s).classList.toggle('hidden',s!==id));window.scrollTo({top:0,behavior:'smooth'});}
+function checkInfoReady(){const n=document.getElementById('f-name').value.trim();const o=document.getElementById('f-org').value.trim();document.getElementById('btn-begin').disabled=!(n&&o);}
+function beginSurvey(){info={name:document.getElementById('f-name').value.trim(),title:document.getElementById('f-title').value.trim(),org:document.getElementById('f-org').value.trim(),industry:document.getElementById('f-industry').value.trim(),size:document.getElementById('f-size').value.trim(),email:document.getElementById('f-email').value.trim()};currentCat=0;showScreen('survey');renderSurvey();}
+
+function renderSurvey(){
+  const cat=CATEGORIES[currentCat];
+  const answered=totalAnswered();
+
+  document.getElementById('prog-text').textContent=`${answered}/${totalQ}`;
+  document.getElementById('prog-fill').style.width=`${(answered/totalQ)*100}%`;
+
+  // Tabs
+  let tabs='';
+  CATEGORIES.forEach((c,i)=>{
+    const done=c.questions.every((_,qi)=>answers[`${i}-${qi}`]);
+    const cls=i===currentCat?'cat-tab active':done?'cat-tab done':'cat-tab';
+    tabs+=`<button class="${cls}" onclick="currentCat=${i};renderSurvey()">${c.icon}${done?' ✓':''}</button>`;
+  });
+  document.getElementById('cat-tabs').innerHTML=tabs;
+
+  document.getElementById('sec-label').textContent=`Section ${currentCat+1} of ${CATEGORIES.length}`;
+  document.getElementById('sec-title').textContent=`${cat.icon} ${cat.title}`;
+  const catAns=cat.questions.filter((_,qi)=>answers[`${currentCat}-${qi}`]).length;
+  document.getElementById('sec-meta').textContent=`${catAns}/${cat.questions.length} answered · Weight: ${cat.weight}%`;
+
+  // Questions
+  let qGlobalIdx=CATEGORIES.slice(0,currentCat).reduce((a,c)=>a+c.questions.length,0);
+  let html='';
+  cat.questions.forEach((q,qi)=>{
+    const sel=answers[`${currentCat}-${qi}`]||0;
+    html+=`<div class="question-card${sel?' answered':''}">`;
+    html+=`<div class="question-text"><span class="qnum">Q${qGlobalIdx+qi+1}.</span>${q.q}</div>`;
+    q.opts.forEach((opt,oi)=>{
+      const isSel=sel===oi+1;
+      html+=`<button class="option-btn${isSel?' selected':''}" onclick="pickAnswer(${currentCat},${qi},${oi})">`;
+      html+=`<span class="option-circle">${isSel?'✓':oi+1}</span>`;
+      html+=`<span class="option-label">${opt}</span></button>`;
+    });
+    html+='</div>';
+  });
+  document.getElementById('questions-container').innerHTML=html;
+
+  // Nav
+  let nav='';
+  if(currentCat>0)nav+=`<button class="btn-back" onclick="currentCat--;renderSurvey()">← Previous</button>`;
+  if(currentCat<CATEGORIES.length-1){
+    nav+=`<button class="btn-next" style="flex:2" onclick="currentCat++;renderSurvey()">Next Section →</button>`;
+  }else{
+    const allDone=answered===totalQ;
+    nav+=`<button class="btn-next" style="flex:2;background:${allDone?'var(--success)':'#94a3b8'}" ${allDone?'':'disabled'} onclick="showResults()">${allDone?'View Results →':`${totalQ-answered} questions remaining`}</button>`;
+  }
+  document.getElementById('nav-row').innerHTML=nav;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function pickAnswer(ci,qi,oi){answers[`${ci}-${qi}`]=oi+1;renderSurvey();}
+
+function showResults(){
+  showScreen('results');
+  const overall=getOverall();const stage=getStage(overall);
+  document.getElementById('res-meta').textContent=`${info.name} · ${info.org}`;
+  document.getElementById('res-score').textContent=overall.toFixed(2);
+  document.getElementById('res-stage').textContent=`Stage ${stage+1}: ${STAGES[stage]}`;
+
+  // Radar
+  const catScores=CATEGORIES.map((c,i)=>({score:getCatScore(i),title:c.title,icon:c.icon,short:c.title.replace('& ','').split(' ').slice(0,2).join(' ')}));
+  const sz=300,cx=sz/2,cy=sz/2,r=sz*.38,n=catScores.length,step=(2*Math.PI)/n;
+  const pt=(i,v)=>{const a=step*i-Math.PI/2,d=(v/5)*r;return[cx+d*Math.cos(a),cy+d*Math.sin(a)];};
+  let svg=`<svg viewBox="0 0 ${sz} ${sz}" style="width:100%;max-width:${sz}px">`;
+  [1,2,3,4,5].forEach(l=>{const pts=Array.from({length:n},(_,i)=>pt(i,l).join(',')).join(' ');svg+=`<polygon points="${pts}" fill="none" stroke="#ddd" stroke-width=".5"/>`;});
+  for(let i=0;i<n;i++){const[x,y]=pt(i,5);svg+=`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#eee" stroke-width=".5"/>`;}
+  const poly=catScores.map((s,i)=>pt(i,s.score).join(',')).join(' ');
+  svg+=`<polygon points="${poly}" fill="rgba(30,58,110,0.2)" stroke="#1e3a6e" stroke-width="2"/>`;
+  catScores.forEach((s,i)=>{const[x,y]=pt(i,s.score);svg+=`<circle cx="${x}" cy="${y}" r="4" fill="#1e3a6e"/>`;});
+  catScores.forEach((s,i)=>{const[x,y]=pt(i,5.6);const a=x<cx-10?'end':x>cx+10?'start':'middle';svg+=`<text x="${x}" y="${y}" text-anchor="${a}" font-size="9" fill="#1a1a2e" font-family="Outfit,sans-serif">${s.icon} ${s.short}</text>`;});
+  svg+='</svg>';
+  document.getElementById('radar-container').innerHTML=svg;
+
+  // Breakdown
+  let bd='';
+  catScores.forEach(s=>{const st=getStage(s.score);const pct=(s.score/5)*100;
+    bd+=`<div class="cat-row"><div class="cat-row-header"><span class="cat-row-name">${s.icon} ${s.title}</span><span class="cat-row-score">${s.score.toFixed(2)} · Stage ${st+1}</span></div><div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:linear-gradient(90deg,#94A3B8,${STAGE_COLORS[st]})"></div></div></div>`;
+  });
+  document.getElementById('cat-breakdown').innerHTML=bd;
+
+  // Insights
+  const sorted=[...catScores].sort((a,b)=>b.score-a.score);
+  const strong=sorted[0],weak=sorted[sorted.length-1];
+  document.getElementById('insights').innerHTML=`
+    <div class="insight-card strong"><div class="insight-label">💪 Strongest</div><div class="insight-title">${strong.icon} ${strong.title}</div><div class="insight-score">Score: ${strong.score.toFixed(2)}</div></div>
+    <div class="insight-card weak"><div class="insight-label">🔧 Focus Area</div><div class="insight-title">${weak.icon} ${weak.title}</div><div class="insight-score">Score: ${weak.score.toFixed(2)}</div></div>`;
+}
+
+function exportCSV(){
+  let csv='Name,Title,Organization,Industry,Company Size,Email,Overall Score,Maturity Stage,Assessment Date';
+  CATEGORIES.forEach(c=>{csv+=`,${c.title} Score`;});
+  CATEGORIES.forEach((c,ci)=>{c.questions.forEach((q,qi)=>{csv+=`,"${q.q.replace(/"/g,'""')}"`;});});
+  csv+='\n';
+  const ov=getOverall();const st=getStage(ov);
+  csv+=`"${info.name}","${info.title}","${info.org}","${info.industry}","${info.size}","${info.email}",${ov.toFixed(2)},"Stage ${st+1}: ${STAGES[st]}","${new Date().toISOString().slice(0,10)}"`;
+  CATEGORIES.forEach((_,ci)=>{csv+=`,${getCatScore(ci).toFixed(2)}`;});
+  CATEGORIES.forEach((c,ci)=>{c.questions.forEach((_,qi)=>{csv+=`,${answers[`${ci}-${qi}`]||''}`;});});
+  csv+='\n';
+  const blob=new Blob([csv],{type:'text/csv'});const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=`AI_Maturity_${info.org||'Assessment'}_${new Date().toISOString().slice(0,10)}.csv`;a.click();URL.revokeObjectURL(url);
+  toast('CSV downloaded');
+}
+
+function copyResults(){
+  const ov=getOverall();const st=getStage(ov);
+  let t=`AI Maturity Assessment Results\n${'='.repeat(40)}\nRespondent: ${info.name} | ${info.title} | ${info.org}\nOverall Score: ${ov.toFixed(2)} / 5.00\nMaturity Stage: Stage ${st+1} — ${STAGES[st]}\n\nCategory Breakdown:\n${'-'.repeat(40)}\n`;
+  CATEGORIES.forEach((c,i)=>{const s=getCatScore(i);t+=`${c.icon} ${c.title}: ${s.toFixed(2)} (Stage ${getStage(s)+1})\n`;});
+  navigator.clipboard.writeText(t);toast('Results copied to clipboard');
+}
+
+function emailResults(){
+  const ov=getOverall();const st=getStage(ov);
+  let body=`AI Maturity Assessment Results%0A%0A`;
+  body+=`Respondent: ${encodeURIComponent(info.name)} | ${encodeURIComponent(info.title)} | ${encodeURIComponent(info.org)}%0A`;
+  body+=`Overall Score: ${ov.toFixed(2)} / 5.00%0AMaturity Stage: Stage ${st+1} — ${encodeURIComponent(STAGES[st])}%0A%0A`;
+  body+=`Category Breakdown:%0A`;
+  CATEGORIES.forEach((c,i)=>{const s=getCatScore(i);body+=`${c.title}: ${s.toFixed(2)} (Stage ${getStage(s)+1})%0A`;});
+  const subject=encodeURIComponent(`AI Maturity Assessment: ${info.name} (${info.org}) — Stage ${st+1}`);
+  window.open(`mailto:?subject=${subject}&body=${body}`,'_blank');
+  toast('Email client opened');
+}
+
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+</script>
+</body>
+</html>
